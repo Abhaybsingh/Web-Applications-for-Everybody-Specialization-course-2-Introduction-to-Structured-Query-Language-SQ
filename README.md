@@ -1,0 +1,1 @@
+# Web-Applications-for-Everybody-Specialization-course-2-Introduction-to-Structured-Query-Language-SQ
