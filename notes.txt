@@ -1,0 +1,157 @@
+Browser request to the server using http that request
+pulls some php files and runs that php file that sends the 
+request to the sql server run query in database then return the response
+
+
+Create DATABASE People DEFAULT CHARACTER SET utf8;
+Use People;
+
+Create Table Users (
+    name VARCHAR(128),
+    email VARCHAR(128)
+);
+
+INSERT INTO Users (name, email) VALUES('Chuck','csev@umich.edu');
+INSERT INTO Users (name, email) VALUES('Somesh','somesh@umich.edu');
+INSERT INTO Users (name, email) VALUES('Caitlin','cait@umich.edu');
+INSERT INTO Users (name, email) VALUES('Ted','ted@umich.edu');
+INSERT INTO Users (name, email) VALUES('Sally','sally@umich.edu');
+
+Delete from Users where email='ted@umimch.edu';
+
+Update Users SET name='Charles' where email='csev@umich.edu';
+
+Select * from Users;
+
+Select * from Users where email='csev@umich.edu';
+
+Select * from Users order by email;
+Drop Table Users;
+
+Create Table Users (
+    user_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name VARCHAR(128),
+    email VARCHAR(128),
+    PRIMARY KEY(user_id),
+    INDEX(email) 
+)
+
+
+normalization of the tables
+
+one object for each column is not suitable 
+
+We have to create a balance between the object belong together and
+the object belong separate.
+
+Track
+Album
+Artist
+Genre
+Rating
+Len
+Count
+
+Create First table it should be the core table, in this track is the core
+thing then look at their thing and find the attribute which are like an aspect of the
+track and different for every track and same across multiple track.
+
+clue is vertical duplication 
+
+first table 
+TRACK TITLE LEN RATING COUNT 
+
+
+ANOTHER TABLE FOR ALBUMS (every track belongs to an album)
+
+albums, title
+
+
+Album belongs to an Artist(every album belongs to an artist)
+
+Artist, Name
+
+
+Genre is olny remaining now if we connect to any table then it makes a 
+difference
+
+normalization in 3nf
+
+Do not replicate data.
+Use integer for keys
+Add a special key column to each table, which you will make references to.
+
+
+After doing 3nf
+
+Artist Table
+artist_id,  name
+
+Album table 
+album_id, title, artist_id(it is a foreign key which points to the artist table)
+
+Track table
+track_id,  title, rating, len,count, album_id, genre_id
+
+Genre table
+genre_id, name
+
+
+PRIMARY KEY -  generally an integer auto-increment field
+
+Logical key - what the outside world uses for lookup
+
+Foreign key - generally an integer key pointing to a arowe in another table
+
+Never use your logical key as the primary key
+never use string as an Logical key
+
+Create database Music default CHARACTER set utf8;
+
+use Music;
+
+when we start creating the table in database, we should create table from
+leaf to root. Otherwise it will cause an error of referncing.
+
+create table Artist (
+    artist_id INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    PRIMARY KEY (artist_id)
+) ENGINE = InnoDB;
+
+create table Album (
+    album_id INTEGER NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255),
+    artist_id INTEGER,
+
+    PRIMARY KEY(album_id),
+    INDEX USING BTREE (title),
+
+    CONSTRAINT FOREIGN KEY (artist_id)
+        references Artist (artist_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+create table Genre (
+    genre_id INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    PRIMARY KEY(genre_id),
+    INDEX USING BTREE (name)
+) ENGINE =InnoDB;
+
+create table Track (
+    track_id INTEGER NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255),
+    len INTEGER,
+    rating INTEGER,
+    count INTEGER,
+    album_id INTEGER,
+    genre_id INTEGER,
+    PRIMARY KEY (track_id),
+    INDEX USING BTREE (title),
+
+    CONSTRAINT FOREIGN KEY (album_id) references Album (album_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FOREIGN KEY (genre_id) references Genre (genre_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
